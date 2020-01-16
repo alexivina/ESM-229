@@ -9,7 +9,31 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
 
+```{r}
+library(tidyverse)
+```
+
+Part 0b: Model parameters
+
+```{r}
+# Fixed Economic parameters (LEAVE THIS ALONE FOR NOW)
+p_saving<-c(.22) # output saved, default at 0.22
+p_capShare<-c(.3) # Cobb-Douglas capital share, defaut at 0.3
+p_capDep<-c(.1) # capital depreciation, default at 0.1
+p_TFP_g<-c(.005) # TFP growth rate, default at 0.005   
+p_damage<-c(.009) # default at 0.009
+
+# Variable Economic parameters (TRY DIFFERENT VALUES)
+p_emInt_g<-c(-.005) # default at -.005
+p_enInt_g<-c(-.01) # default at -.01
+p_pop_g<-c(0.01) # default at .01
+    
+# Fixed climate parameters (LEAVE THIS ALONE)
+p_carDecay<-c(400) # carbon decay, default 400
+p_climDelay<-c(.015) # climate decay, default 0.015
+
+#Variable climate parameters (TRY DIFFERENT VALUES)
+p_climSens<-c(2.5) # climate sensitivity default 2.5
 ```
 
