@@ -37,3 +37,63 @@ p_climDelay<-c(.015) # climate decay, default 0.015
 p_climSens<-c(2.5) # climate sensitivity default 2.5
 ```
 
+Part 0c: Initial Conditions
+
+```{r}
+# years
+p_years<-c(291)
+
+# Economic
+ic_pop<-c(6900) # in millions
+ic_enInt<-c(5.98) # in EJ/$trill
+ic_emInt<-c(68.27) # in Mt CO2 /EJ            
+ic_K<-c(139.65) # $trill   
+ic_TFP<-c(.03)
+
+# Climate
+ic_preCO2<-c(275) # ppm
+ic_nowCO2<-c(380) # ppm
+ic_T<-c(0.8) # degree C above preindustrial
+
+# creating empty matrices for storing data
+year<-matrix(0,p_years,1)    
+pop<-matrix(0, p_years,1)
+enInt<-matrix(0, p_years,1)
+emInt<-matrix(0, p_years,1)    
+TFP<-matrix(0, p_years,1)
+Y_gross<-matrix(0, p_years,1)
+K<-matrix(0, p_years,1)
+gdppc<-matrix(0, p_years,1)
+CO2ppm<-matrix(0, p_years,1)
+em_MtCO2<-matrix(0,p_years,1)
+em_ppm<-matrix(0,p_years,1)
+Y_net<-matrix(0,p_years,1)
+C<-matrix(0,p_years,1)
+C_pc<-matrix(0,p_years,1)
+Teq<-matrix(0,p_years,1)
+climateDamage<-matrix(0,p_years,1)
+```
+
+Part 1 Economic Model
+
+```{r}
+#Part 1a: Getting exogenous changes in population, energy intensity, emissions intensity, TFP
+
+
+# initializing for first period    
+year[1]<-2010
+pop[1]<-ic_pop
+enInt[1]<-ic_enInt    
+emInt[1]<-ic_emInt
+TFP[1]<-ic_TFP
+
+for (j in 2:p_years) {
+year[j]<-year[j-1]+1
+pop[j]=pop[j-1]*(1+p_pop_g)
+enInt[j]=enInt[j-1]*(1+p_enInt_g)
+emInt[j]=emInt[j-1]*(1+p_emInt_g)
+TFP[j]=TFP[j-1]*(1+p_TFP_g)
+    }
+
+```
+
