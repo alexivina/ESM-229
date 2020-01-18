@@ -170,3 +170,9 @@ plot(year[2:j], C_pc[2:j], ylab="Consumption per cap ($ thousand)")
 write.csv(climateDamage,"C:\\Users\\blsju\\Desktop\\BREN\\Second Year\\Winter Quarter\\ESM 229\\climateDamageSim1.csv", row.names = FALSE)
 ```
 
+```{r}
+climateDamage_BAU <- read.csv(file = 'climateDamageBAU.csv')
+
+
+```
+
