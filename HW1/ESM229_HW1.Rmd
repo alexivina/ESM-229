@@ -119,6 +119,7 @@ Y_net[1]<-Y_gross[1]-climateDamage[1] # net of damages output
 C[1]<-Y_net[1]-p_saving*Y_net[1]
 C_pc[1]<-(C[1]/pop[1])*1000      
 
+plus_one_ton = c((1/10^6), rep(0, 290)) #plus one ton of CO2
 
 # looping over rest of the years
 for (j in 2:p_years) {
@@ -131,7 +132,7 @@ gdppc[j]=Y_gross[j]/pop[j]
 
 #emissions
 em_MtCO2[j]<-pop[j]*gdppc[j]*enInt[j]*emInt[j] #Kaya identity
-em_ppm[j]<-em_MtCO2[j]/7810 # convert to atmospheric CO2 concentrations
+em_ppm[j]<-(em_MtCO2[j]+plus_one_ton)/7810 # convert to atmospheric CO2 concentrations
       
 #Part 2: climate model     
 #CO2 concentration
