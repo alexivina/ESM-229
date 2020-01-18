@@ -166,3 +166,7 @@ plot(year[2:j], Y_net[2:j], ylab="Net output ($ trillion)")
 plot(year[2:j], C_pc[2:j], ylab="Consumption per cap ($ thousand)")
 ```
 
+```{r}
+write.csv(climateDamage,"C:\\Users\\blsju\\Desktop\\BREN\\Second Year\\Winter Quarter\\ESM 229\\climateDamageSim1.csv", row.names = FALSE)
+```
+
