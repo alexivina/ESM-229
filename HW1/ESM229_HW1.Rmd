@@ -173,8 +173,7 @@ write.csv(climateDamage,"C:\\Users\\Juan\\Desktop\\BREN\\Second Year\\Winter Qua
 ```{r}
 
 damages_question_3_BAU <- read_csv("climateDamageBAU.csv") %>%
-  rename("BAU" = "V1") %>% 
-  sum("BAU")
+  rename("BAU" = "V1")
 
 damages_q3_plus1 <- read_csv("climateDamageSim1.csv") %>%
   rename("plus1" = "V1")
@@ -221,7 +220,7 @@ Original Model with set paramets no addition of plus one more ton
     p_climDelay<-c(.015) # climate decay, default 0.015
 
     #Variable climate parameters (TRY DIFFERENT VALUES)
-    p_climSens<-c(2.5) # climate sensitivity default 2.5
+    p_climSens<-c(1.5) # climate sensitivity default 2.5
 ```
 
 ```{r}
