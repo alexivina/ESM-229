@@ -9,22 +9,421 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+library(tidyverse)
 ```
 
-## Including Plots
+toy_IAM_SCC_fuction For Part 1
+```{r}
+############################ START OF IAM FUNCTION ############################ 
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+    toy_IAM_SCC<-function(p_damage, p_climSens, p_discount) {
+
+
+ 
+      
+      
+#######  Part 0a: Fixed Model parameters ###### 
+    p_numSCC<-c(2)
+    p_years<-c(291)
+
+    # Fixed Economic parameters (LEAVE THIS ALONE FOR NOW)
+    p_abatePct<-matrix(0,p_years) # zero abatement   
+    p_abate<-c(.03)
+    p_emInt_g<-c(-.005) # default at -.005
+    p_enInt_g<-c(-.01) # default at -.01
+    p_pop_g<-c(0.01) # default at .01   
+    p_capShare<-c(.3) #default at .3
+    p_capDep<-c(.1) #default at .1
+    p_saving<-c(.22) #default at .22
+    p_TFP_g<-c(.005)  #defult .005
+    p_abateE<-c(2) #default 2
+    
+    # Fixed climate parameters (LEAVE THIS ALONE FOR NOW)
+    p_carDecay<-400 #default 400
+    p_climDelay<-c(.015) #default .015
+
+
+
+###### Part 0b: Initial conditions (in 2010) ###### 
+    
+
+    # Economic
+    ic_pop<-c(6900) # in millions
+    ic_enInt<-c(5.98) # in EJ/$trill
+    ic_emInt<-c(68.27) # in Mt CO2 /EJ            
+    ic_K<-c(139.65) # $trill   
+    ic_TFP<-c(.03)
+
+    # Climate
+    ic_preCO2<-c(275) # ppm
+    ic_nowCO2<-c(380) # ppm
+    ic_T<-c(0.8) # degree C above preindustrial
+
+
+   # creating empty matrix
+    year<-matrix(0,p_years,p_numSCC)    
+    pop<-matrix(0, p_years,p_numSCC)
+    enInt<-matrix(0, p_years,p_numSCC)
+    emInt<-matrix(0, p_years,p_numSCC)    
+    TFP<-matrix(0, p_years,p_numSCC)
+    Y_gross<-matrix(0, p_years,p_numSCC)
+    Y_netAbate<-matrix(0, p_years,p_numSCC)
+    K<-matrix(0, p_years,p_numSCC)
+    gdppc<-matrix(0, p_years,p_numSCC)
+    CO2ppm<-matrix(0, p_years,p_numSCC)
+    em_MtCO2<-matrix(0,p_years,p_numSCC)
+    em_ppm<-matrix(0,p_years,p_numSCC)
+    damageCost<-matrix(0,p_years,p_numSCC)
+    Y_net<-matrix(0,p_years,p_numSCC)
+    C<-matrix(0,p_years,p_numSCC)
+    C_pc<-matrix(0,p_years,p_numSCC)
+    Teq<-matrix(0,p_years,p_numSCC)
+    T<-matrix(0,p_years,p_numSCC)
+    em_SCC<-matrix(0,p_years, p_numSCC)
+    abateCost<-matrix(0,p_years,p_numSCC)
+    abateShare<-matrix(0,p_years,p_numSCC)
+    climateShare<-matrix(0,p_years,p_numSCC)
+    SCC<-matrix(0, p_numSCC)
+    utility<-matrix(0,p_years,p_numSCC)
+    welfare<-matrix(0,p_numSCC)
+ 
+    
+# looping over for SCC 
+for (c in 1:p_numSCC) {
+
+    # adding marginal emissions
+    
+    em_SCC[2,c]<-(c-1)/1e6
+ 
+  
+    ############################ Part 1a: economic model ################################## 
+    ####### Part 1a: Getting exogenous changes in population, energy intensity, emissions intensity, TFP####### 
+
+    # initializing for first period
+    year[1,c]<-2010
+    pop[1,c]<-ic_pop
+    enInt[1,c]<-ic_enInt    
+    emInt[1,c]<-ic_emInt
+    TFP[1,c]<-ic_TFP
+
+    # looping over future periods
+    for (j in 2:p_years) {
+      year[j,c]<-year[j-1,c]+1
+      pop[j,c]=pop[j-1,c]*(1+p_pop_g)
+      enInt[j,c]=enInt[j-1,c]*(1+p_enInt_g)
+      emInt[j,c]=emInt[j-1,c]*(1+p_emInt_g)
+      TFP[j,c]=TFP[j-1,c]*(1+p_TFP_g)
+    }
+
+
+    ######## Part 1b: Getting gross output, capital, emissions ############## 
+
+    # initializing for first period
+    #Part 1: Economic model w/o climate damages
+    K[1,c]<-ic_K
+    Y_gross[1,c]<-TFP[1,c]*K[1,c]^p_capShare*pop[1,c]^(1-p_capShare)
+    abateShare[1,c]<-p_abate*p_abatePct[1]^p_abateE
+    abateCost[1,c]<-abateShare[1,c]*Y_gross[1,c]
+    Y_netAbate[1,c]=Y_gross[1,c]-abateCost[1,c]
+
+    
+    #Part 2: climate model
+    #CO2 concentration
+    CO2ppm[1,c]<-ic_nowCO2                      
+    T[1,c]=ic_T
+
+    #Part 3: Economic model with climate damages
+    #climate damages
+    climateShare[j,c]<-(p_damage*T[1,c]^2)/(1+p_damage*T[1,c]^2) # damage function
+    damageCost[1,c]<-Y_gross[1,c]*climateShare[j,c]
+    Y_net[1,c]<-Y_gross[1,c]-abateCost[1,c]-damageCost[1,c] # net of abate cost and damages output          
+    C[1,c]<-Y_net[1,c]-p_saving*Y_net[1,c]
+    C_pc[1,c]<-(C[1,c]/pop[1,c])*1000      
+    K[1+1,c]<-(1-p_capDep)*K[1,c]+p_saving*Y_net[1,c]
+
+
+    # looping over the rest of the years
+    for (j in 2:p_years) {
+      
+      #Part 1: Economic model w/o climate damages
+      
+      #Economic output 
+      #K[j,c]<-(1-p_capDep)*K[j-1,c]+p_saving*Y_gross[j-1,c]  
+      
+      
+      K[j,c]<-(1-p_capDep)*K[j-1,c]+p_saving*Y_net[j-1,c]  
+      Y_gross[j,c]<-TFP[j,c]*K[j,c]^p_capShare*pop[j,c]^(1-p_capShare)
+      abateShare[j,c]<-p_abate*p_abatePct[j]^p_abateE
+      abateCost[j,c]<-abateShare[j,c]*Y_gross[j,c]
+      Y_netAbate[j,c]=Y_gross[j,c]-abateCost[j,c] 
+      gdppc[j,c]=Y_netAbate[j,c]/pop[j,c]
+
+      #emissions
+      em_MtCO2[j,c]<-(pop[j,c]*gdppc[j,c]*enInt[j,c]*emInt[j,c])*(1-p_abatePct[j]) + em_SCC[j,c]
+      em_ppm[j,c]<-em_MtCO2[j,c]/7810
+      
+      #Part 2: climate model
+      
+      #CO2 concentration
+      CO2ppm[j,c]<-CO2ppm[j-1,c]+0.5*((em_ppm[j,c])- (CO2ppm[j-1,c]-(ic_preCO2))/(p_carDecay))                             
+    
+      #Radiative forcing
+      rad_CO2_Wpm2<-5.35*log(CO2ppm[j,c]/ic_preCO2)
+
+      # Converting to temperature  
+      Teq[j,c]<-rad_CO2_Wpm2*(p_climSens/(5.3*log(2)))
+      T[j,c]=T[j-1,c]+p_climDelay*(Teq[j,c]-T[j-1,c])
+
+      #Part 3: Economic model with climate damages
+      #climate damages
+      climateShare[j,c]<-(p_damage*T[j,c]^2)/(1+p_damage*T[j,c]^2) # damage function
+      damageCost[j,c]<-climateShare[j,c]*Y_gross[j,c]
+      Y_net[j,c]<-Y_gross[j,c]-abateCost[j,c]-damageCost[j,c] # output net of damages          
+      C[j,c]<-Y_net[j,c]-p_saving*Y_net[j,c] # consumption 
+      C_pc[j,c]<-(C[j,c]/pop[j,c])*1000      
+    }
+ } 
+ 
+ 
+###################### Part 3: calculating SCC ###################### 
+
+#setup discount rate
+disFactor<-matrix(1,p_years,1)
+
+for(j in 2:p_years) {
+    disFactor[j]<-1/(1+p_discount)^j
+}
+
+disMarDamage<-matrix(0,p_years, p_numSCC-1)
+
+for (c in 1:p_numSCC-1) {
+   disMarDamage[,c]=(damageCost[,c+1]-damageCost[,1])*1e12* disFactor[,1]
+  SCC[c]=sum(disMarDamage[,c])
+}
+ 
+return(c(SCC[1,1]))
+    }
+
+
+
+
+############################ END OF FUNCTION ############################
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+Toy_IAM_Optimal_Function For Part 2
+```{r}
+############################ START OF IAM FUNCTION ############################ 
+
+
+    toy_IAM_optimal<-function(p_abatePct, p_abate, p_damage, p_climSens, p_discount) {
+
+  # expanding to 291 years      
+  p_abatePct<-c(rep(p_abatePct[1], times=10),  rep(p_abatePct[2], times=10),  rep(p_abatePct[3], times=10),  rep(p_abatePct[4], times=10),  
+               rep(p_abatePct[5], times=10),  rep(p_abatePct[6], times=10),  rep(p_abatePct[7], times=10),  rep(p_abatePct[8], times=10),  
+               rep(p_abatePct[9], times=10),  rep(p_abatePct[10], times=201))      
+      
+      
+#######  Part 0a: Fixed Model parameters ###### 
+
+  p_numSCC<-c(2)
+  p_years<-c(291)
+
+    # Fixed Economic parameters (LEAVE THIS ALONE FOR NOW)
+    p_emInt_g<-c(-.005) # default at -.005
+    p_enInt_g<-c(-.01) # default at -.01
+    p_pop_g<-c(0.01) # default at .01   
+    p_capShare<-c(.3) #default at .3
+    p_capDep<-c(.1) #default at .1
+    p_saving<-c(.22) #default at .22
+    p_TFP_g<-c(.005)  #defult .005
+    p_abateE<-c(2.8) #default 2
+    
+    # Fixed climate parameters (LEAVE THIS ALONE FOR NOW)
+    p_carDecay<-400 #default 400
+    p_climDelay<-c(.015) #default .015
+
+
+
+###### Part 0b: Initial conditions (in 2010) ###### 
+    
+
+    # Economic
+    ic_pop<-c(6900) # in millions
+    ic_enInt<-c(5.98) # in EJ/$trill
+    ic_emInt<-c(68.27) # in Mt CO2 /EJ            
+    ic_K<-c(139.65) # $trill   
+    ic_TFP<-c(.03)
+
+    # Climate
+    ic_preCO2<-c(275) # ppm
+    ic_nowCO2<-c(380) # ppm
+    ic_T<-c(0.8) # degree C above preindustrial
+
+
+   # creating empty matrix
+    year<-matrix(0,p_years,p_numSCC)    
+    pop<-matrix(0, p_years,p_numSCC)
+    enInt<-matrix(0, p_years,p_numSCC)
+    emInt<-matrix(0, p_years,p_numSCC)    
+    TFP<-matrix(0, p_years,p_numSCC)
+    Y_gross<-matrix(0, p_years,p_numSCC)
+    Y_netAbate<-matrix(0, p_years,p_numSCC)
+    K<-matrix(0, p_years,p_numSCC)
+    gdppc<-matrix(0, p_years,p_numSCC)
+    CO2ppm<-matrix(0, p_years,p_numSCC)
+    em_MtCO2<-matrix(0,p_years,p_numSCC)
+    em_ppm<-matrix(0,p_years,p_numSCC)
+    damageCost<-matrix(0,p_years,p_numSCC)
+    Y_net<-matrix(0,p_years,p_numSCC)
+    C<-matrix(0,p_years,p_numSCC)
+    C_pc<-matrix(0,p_years,p_numSCC)
+    Teq<-matrix(0,p_years,p_numSCC)
+    T<-matrix(0,p_years,p_numSCC)
+    em_SCC<-matrix(0,p_years, p_numSCC)
+    abateCost<-matrix(0,p_years,p_numSCC)
+    abateShare<-matrix(0,p_years,p_numSCC)
+    climateShare<-matrix(0,p_years,p_numSCC)
+    SCC<-matrix(0, p_numSCC)
+    utility<-matrix(0,p_years,p_numSCC)
+    welfare<-matrix(0,p_numSCC)
+ 
+    
+# looping over for SCC 
+for (c in 1:p_numSCC) {
+
+    # adding marginal emissions
+    
+    em_SCC[2,c]<-(c-1)/1e6
+
+    ############################ Part 1a: economic model ################################## 
+    ####### Part 1a: Getting exogenous changes in population, energy intensity, emissions intensity, TFP####### 
+
+    # initializing for first period
+    year[1,c]<-2010
+    pop[1,c]<-ic_pop
+    enInt[1,c]<-ic_enInt    
+    emInt[1,c]<-ic_emInt
+    TFP[1,c]<-ic_TFP
+
+    # looping over future periods
+    for (j in 2:p_years) {
+      year[j,c]<-year[j-1,c]+1
+      pop[j,c]=pop[j-1,c]*(1+p_pop_g)
+      enInt[j,c]=enInt[j-1,c]*(1+p_enInt_g)
+      emInt[j,c]=emInt[j-1,c]*(1+p_emInt_g)
+      TFP[j,c]=TFP[j-1,c]*(1+p_TFP_g)
+    }
+
+
+    ######## Part 1b: Getting gross output, capital, emissions ############## 
+
+    # initializing for first period
+    #Part 1: Economic model w/o climate damages
+    K[1,c]<-ic_K
+    Y_gross[1,c]<-TFP[1,c]*K[1,c]^p_capShare*pop[1,c]^(1-p_capShare)
+    abateShare[1,c]<-p_abate*p_abatePct[1]^p_abateE
+    abateCost[1,c]<-abateShare[1,c]*Y_gross[1,c]
+    Y_netAbate[1,c]=Y_gross[1,c]-abateCost[1,c]
+
+    
+    #Part 2: climate model
+    #CO2 concentration
+    CO2ppm[1,c]<-ic_nowCO2                      
+    T[1,c]=ic_T
+
+    #Part 3: Economic model with climate damages
+    #climate damages
+    climateShare[j,c]<-(p_damage*T[1,c]^2)/(1+p_damage*T[1,c]^2) # damage function
+    damageCost[1,c]<-Y_gross[1,c]*climateShare[j,c]
+    Y_net[1,c]<-Y_gross[1,c]-abateCost[1,c]-damageCost[1,c] # net of abate cost and damages output          
+    C[1,c]<-Y_net[1,c]-p_saving*Y_net[1,c]
+    C_pc[1,c]<-(C[1,c]/pop[1,c])*1000      
+    K[1+1,c]<-(1-p_capDep)*K[1,c]+p_saving*Y_net[1,c]
+
+
+    # looping over the rest of the years
+    for (j in 2:p_years) {
+      
+      #Part 1: Economic model w/o climate damages
+      
+      #Economic output 
+      #K[j,c]<-(1-p_capDep)*K[j-1,c]+p_saving*Y_gross[j-1,c]  
+      
+      
+      K[j,c]<-(1-p_capDep)*K[j-1,c]+p_saving*Y_net[j-1,c]  
+      Y_gross[j,c]<-TFP[j,c]*K[j,c]^p_capShare*pop[j,c]^(1-p_capShare)
+      abateShare[j,c]<-p_abate*p_abatePct[j]^p_abateE
+      abateCost[j,c]<-abateShare[j,c]*Y_gross[j,c]
+      Y_netAbate[j,c]=Y_gross[j,c]-abateCost[j,c] 
+      gdppc[j,c]=Y_netAbate[j,c]/pop[j,c]
+
+      #emissions
+      em_MtCO2[j,c]<-(pop[j,c]*gdppc[j,c]*enInt[j,c]*emInt[j,c])*(1-p_abatePct[j]) + em_SCC[j,c]
+      em_ppm[j,c]<-em_MtCO2[j,c]/7810
+      
+      #Part 2: climate model
+      
+      #CO2 concentration
+      CO2ppm[j,c]<-CO2ppm[j-1,c]+0.5*((em_ppm[j,c])- (CO2ppm[j-1,c]-(ic_preCO2))/(p_carDecay))                             
+    
+      #Radiative forcing
+      rad_CO2_Wpm2<-5.35*log(CO2ppm[j,c]/ic_preCO2)
+
+      # Converting to temperature  
+      Teq[j,c]<-rad_CO2_Wpm2*(p_climSens/(5.3*log(2)))
+      T[j,c]=T[j-1,c]+p_climDelay*(Teq[j,c]-T[j-1,c])
+
+      #Part 3: Economic model with climate damages
+      #climate damages
+      climateShare[j,c]<-(p_damage*T[j,c]^2)/(1+p_damage*T[j,c]^2) # damage function
+      damageCost[j,c]<-climateShare[j,c]*Y_gross[j,c]
+      Y_net[j,c]<-Y_gross[j,c]-abateCost[j,c]-damageCost[j,c] # output net of damages          
+      C[j,c]<-Y_net[j,c]-p_saving*Y_net[j,c] # consumption 
+      C_pc[j,c]<-(C[j,c]/pop[j,c])*1000      
+    }
+ } 
+ 
+ 
+###################### Part 3: calculating SCC ###################### 
+
+#setup discount rate
+disFactor<-matrix(1,p_years,1)
+
+for(j in 2:p_years) {
+    disFactor[j]<-1/(1+p_discount)^j
+}
+
+#disMarConsumption<-matrix(0,p_years, p_numSCC-1)
+
+
+disMarDamage<-matrix(0,p_years, p_numSCC-1)
+
+for (c in 1:p_numSCC-1) {
+   disMarDamage[,c]=(damageCost[,c+1]-damageCost[,1])*1e12* disFactor[,1]
+#    disMarConsumption[,c]=(C[,c+1]-C[,1])*1e12* disFactor[,1]
+  
+SCC[c]=sum(disMarDamage[,c])
+#  SCC[c]=sum(disMarConsumption)
+}
+ 
+
+###################### Part 4: Calculating welfare ###################### 
+
+for (c in 1:p_numSCC-1) {
+    utility[,c]<-log(C_pc[,c])*disFactor[,1]* pop[,c]
+    welfare[c]<-sum(utility[,c])
+}
+welfare<-welfare[1]
+
+return(c(welfare))
+
+}
+
+
+
+############################ END OF FUNCTION ############################ 
+```
+
