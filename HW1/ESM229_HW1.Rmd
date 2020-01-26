@@ -212,8 +212,8 @@ Original Model with set paramets no addition of plus one more ton
 
     # Variable Economic parameters (TRY DIFFERENT VALUES)
     p_emInt_g<-c(-.005) # default at -.005
-    p_enInt_g<-c(-.01) # default at -.01
-    p_pop_g<-c(0) # default at .01
+    p_enInt_g<-c(0) # default at -.01
+    p_pop_g<-c(.01) # default at .01
     
     # Fixed climate parameters (LEAVE THIS ALONE)
     p_carDecay<-c(400) # carbon decay, default 400
