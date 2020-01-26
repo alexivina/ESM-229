@@ -1,5 +1,5 @@
 ---
-title: "ESM229_HW2"
+title: "ESM229_Model"
 author: "Juan Espinoza"
 date: "January 24, 2020"
 output: html_document
