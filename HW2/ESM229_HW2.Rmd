@@ -232,7 +232,7 @@ discount1.5_output = matrix(0,n, 1)
 discount3_output = matrix(0,n, 1)
 discount5_output = matrix(0,n, 1)
 
-output = toy_IAM_SCC(p_damage, p_climSens, p_discount3.0)
+output = toy_IAM_SCC(p_damage, p_climSens, p_discount1.5)
 output_vector = matrix(0, 250, 1)
 
 ```
@@ -242,7 +242,7 @@ output_vector = matrix(0, 250, 1)
 output_1.5 = for(i in 1:250){
   p_climSens_output[i] = rlnorm(1, meanlog=0.95, sdlog=0.53)
   
-  discount1.5_output[i] = toy_IAM_SCC(p_damage, p_climSens_output[i], 0.03)
+  discount1.5_output[i] = toy_IAM_SCC(p_damage, p_climSens_output[i], 0.015)
   
 }
 #changed the discount rate issues with the code
