@@ -213,6 +213,29 @@ return(c(SCC[1,1]))
 ```
 
 
+
+```{r}
+distribution <- rlnorm(1000, meanlog = 0.95, sdlog = 0.53)
+
+plot(distribution)
+
+#wrapper
+
+
+
+p_damage = 0.009
+p_climSens = 2.9
+p_discount = 0.015
+n = 250
+
+
+p_damage_output = matrix(0,n, 1)
+p_climSens_output = matrix(0,n, 1)
+discount1.5_output = matrix(0,n, 1)
+discount3_output = matrix(0,n, 1)
+discount5_output = matrix(0,n, 1)
+```
+
 Toy_IAM_Optimal_Function For Part 2
 ```{r}
 ############################ START OF IAM FUNCTION ############################ 
