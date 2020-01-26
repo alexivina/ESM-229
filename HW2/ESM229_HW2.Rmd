@@ -277,7 +277,7 @@ sd(discount1.5_output) # = 193.2659
 for(i in 1:250){
   p_damage_output[i] = rnorm(1, mean=0.009, sd=0.015)
   
-  discount1.5_output[i] = toy_IAM_SCC(p_damage_output[i], p_climSens, 0.05)
+  discount1.5_output[i] = toy_IAM_SCC(p_damage_output[i], p_climSens, 0.015)
   
 }
 #1.5%
