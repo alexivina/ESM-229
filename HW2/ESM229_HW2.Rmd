@@ -232,56 +232,73 @@ discount1.5_output = matrix(0,n, 1)
 discount3_output = matrix(0,n, 1)
 discount5_output = matrix(0,n, 1)
 
-output = toy_IAM_SCC(p_damage, p_climSens, p_discount1.5)
+output = toy_IAM_SCC(p_damage, p_climSens, p_discount3.0)
 output_vector = matrix(0, 250, 1)
 
 ```
 
-1.5% Discount
+1.5%, 3.0%, 5.0% Discount Rates (climate sensitivity)
 ```{r}
 output_1.5 = for(i in 1:250){
   p_climSens_output[i] = rlnorm(1, meanlog=0.95, sdlog=0.53)
   
-  discount1.5_output[i] = toy_IAM_SCC(p_damage, p_climSens_output[i], p_discount1.5)
+  discount1.5_output[i] = toy_IAM_SCC(p_damage, p_climSens_output[i], 0.03)
   
 }
+#changed the discount rate issues with the code
 
 mean(discount1.5_output) # = 299.26
 median(discount1.5_output) # = 251.5304
 sd(discount1.5_output) # = 193.2659
 
+#1.5%
+
+
+```
+
+3.0% Discount (code not working)
+```{r}
+ #mean = 38.15951
+ #median = 30.90275
+ #sd = 1.554641
+```
+
+5.0% Discount (code not working)
+```{r}
+#mean = 10.0039
+#median = 6.92559
+#sd = 9.729807
+
+
+```
+
+1.5%, 3.0%, 5.0% Discount Rates (Damage Function)
+```{r}
+for(i in 1:250){
+  p_damage_output[i] = rnorm(1, mean=0.009, sd=0.015)
+  
+  discount1.5_output[i] = toy_IAM_SCC(p_damage_output[i], p_climSens, 0.05)
+  
+}
+#1.5%
+mean(discount1.5_output) # = 66.50177
+median(discount1.5_output) # = 323.7824
+sd(discount1.5_output) # = 958.1419
 ```
 
 3.0% Discount
 ```{r}
-output_3.0 = for(i in 1:250){
-  p_climSens_output[i] = rlnorm(1, meanlog=0.95, sdlog=0.53)
-  
-  discount3.0_output[i] = toy_IAM_SCC(p_damage, p_climSens_output[i], p_discount3.0)
-  
-}
-
-mean(discount3.0_output) # = 38.15951
-median(discount3.0_output) # = 30.90275
-sd(discount3.0_output) # = 1.554641
+#mean = 17.36176
+#median = 30.33043
+#sd = 82.77475
 ```
 
 5.0% Discount
 ```{r}
-output_3.0 = for(i in 1:250){
-  p_climSens_output[i] = rlnorm(1, meanlog=0.95, sdlog=0.53)
-  
-  discount5.0_output[i] = toy_IAM_SCC(p_damage, p_climSens_output[i], p_discount3.0)
-  
-}
-
-mean(discount5.0_output) # = 10.0039
-median(discount5.0_output) # = 6.92559
-sd(discount5.0_output) # = 9.729807
-
-
+#mean = 7.677772
+#median = 8.37525
+#sd = 12.83112
 ```
-
 
 Toy_IAM_Optimal_Function For Part 2
 ```{r}
