@@ -521,7 +521,7 @@ p_abate = 0.03
 p_discount = 0.03
 
 
-toy_IAM_optimal(p_abatePct, p_abate, p_damage, p_climSens, p_discount)
+
 # welfare decreases as discount increases
 
 
@@ -533,6 +533,7 @@ opt_welfare_BAU = optim(p_abatePct, toy_IAM_optimal,
                     control=list(fnscale=-1, maxit=500),
                     p_abate=p_abate, p_damage=p_damage,
                     p_climSens=p_climSens, p_discount=p_discount)
+opt_welfare_BAU
 
 opt_welfare_0.01 = optim(p_abatePct, toy_IAM_optimal,
                     method = "L-BFGS", lower = rep(0,10), upper = rep(1,10),
@@ -540,10 +541,14 @@ opt_welfare_0.01 = optim(p_abatePct, toy_IAM_optimal,
                     p_abate=0.01, p_damage=p_damage,
                     p_climSens=p_climSens, p_discount=p_discount)
 
+opt_welfare_0.01
+
 opt_welfare_0.1 = optim(p_abatePct, toy_IAM_optimal,
                     method = "L-BFGS", lower = rep(0,10), upper = rep(1,10),
                     control=list(fnscale=-1, maxit=500),
                     p_abate=0.1, p_damage=p_damage,
                     p_climSens=p_climSens, p_discount=p_discount)
+
+opt_welfare_0.1
 ```
 
