@@ -220,7 +220,7 @@ return(c(SCC[1,1]))
 
 p_damage = 0.009
 p_climSens = 2.9
-p_discount1.5 = 0.015
+p_discount1.5 = 0.05
 p_discount3.0 = 0.03
 p_discount5.0 = 0.05
 n = 250
@@ -232,7 +232,7 @@ discount1.5_output = matrix(0,n, 1)
 discount3_output = matrix(0,n, 1)
 discount5_output = matrix(0,n, 1)
 
-output = toy_IAM_SCC(p_damage, p_climSens, p_discount3.0)
+output = toy_IAM_SCC(p_damage, p_climSens, p_discount1.5)
 output_vector = matrix(0, 250, 1)
 
 ```
@@ -261,10 +261,27 @@ output_3.0 = for(i in 1:250){
   
 }
 
-mean(discount3.0_output) # = 2.890416
-median(discount3.0_output) # = 2.613
+mean(discount3.0_output) # = 38.15951
+median(discount3.0_output) # = 30.90275
 sd(discount3.0_output) # = 1.554641
 ```
+
+5.0% Discount
+```{r}
+output_3.0 = for(i in 1:250){
+  p_climSens_output[i] = rlnorm(1, meanlog=0.95, sdlog=0.53)
+  
+  discount5.0_output[i] = toy_IAM_SCC(p_damage, p_climSens_output[i], p_discount3.0)
+  
+}
+
+mean(discount5.0_output) # = 10.0039
+median(discount5.0_output) # = 6.92559
+sd(discount5.0_output) # = 9.729807
+
+
+```
+
 
 Toy_IAM_Optimal_Function For Part 2
 ```{r}
