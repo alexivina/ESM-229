@@ -581,6 +581,30 @@ welfareBAU = cbind(df2, BAUwelfare) %>%
 
 welfareBAU_plot = ggplot(data = welfareBAU) + 
   geom_point(aes(x = decade, y = welfare)) +
-  theme)classic
+  theme_classic()
+
+welfareBAU_plot
+
+welfare01 = data.frame(opt_welfare_0.01$par)
+
+welfare01_2 = cbind(df2, welfare01) %>% 
+  rename("decade" = 'X1.10', "welfare" = 'opt_welfare_0.01.par')
+
+welfare01_plot = ggplot(data = welfare01_2) + 
+  geom_point(aes(x = decade, y = welfare)) +
+  theme_classic()
+
+welfare01_plot
+
+welfare1 = data.frame(opt_welfare_0.1$par)
+
+welfare1_2 = cbind(df2, welfare1) %>% 
+  rename("decade" = 'X1.10', "welfare" = 'opt_welfare_0.1.par')
+
+welfare1_plot = ggplot(data = welfare01_2) + 
+  geom_point(aes(x = decade, y = welfare)) +
+  theme_classic()
+
+welfare1_plot
 ```
 

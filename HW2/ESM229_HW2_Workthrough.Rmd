@@ -10,6 +10,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
+p_damage=0.009
+p_climSens=2.9
+
 
 ```
 
