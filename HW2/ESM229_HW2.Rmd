@@ -526,7 +526,7 @@ for (c in 1:p_numSCC-1) {
 }
 welfare<-welfare[1]
 
-return(em_MtCO2)
+return(c(welfare))
 
 }
 
@@ -620,13 +620,9 @@ welfare1_plot = ggplot(data = welfare01_2) +
 
 welfare1_plot
 
-plot_emissons = data.frame(year = 1:582, em_level = toy_IAM_optimal(opt_welfare_BAU$par, p_abate = 0.03, p_damage = p_damage, p_climSens = p_climSens, p_discount = p_discount)) %>% 
-  filter(year < 100) %>% 
-  filter(year > 1)
-
-ggplot(data = plot_emissons) + 
-  geom_line(aes(x = year, y = em_level), color = "blue") +
-  labs(x = "year", y = "Emissions Level", title = "The Optimal Emissions Level") + theme_classic()
+allwelfare_plot = ggplot(data = welfare01_2, welfare1, welfareBAU) + 
+  geom_point(aes(x = decade, y = welfare)) +
+  theme_classic()
 ```
 
 ```{r}
