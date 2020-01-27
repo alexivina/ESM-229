@@ -287,7 +287,7 @@ discount_plot
 for(i in 1:250){
   p_damage_output[i] = rnorm(1, mean=0.009, sd=0.015)
   
-  discount1.5_output[i] = toy_IAM_SCC(p_damage_output[i], p_climSens, 0.015)
+  discount1.5_output[i] = toy_IAM_SCC(p_damage_output[i], p_climSens, 0.05)
   
 }
 #1.5%
@@ -298,16 +298,16 @@ sd(discount1.5_output) # = 1003.298
 
 3.0% Discount
 ```{r}
-#mean = 17.36176
-#median = 30.33043
-#sd = 82.77475
+#mean = 26.71
+#median = 46.86
+#sd = 97.64
 ```
 
 5.0% Discount
 ```{r}
-#mean = 7.677772
-#median = 8.37525
-#sd = 12.83112
+#mean = 8.45
+#median = 10.58
+#sd = 14.22
 ```
 
 plot for damage function
@@ -316,7 +316,7 @@ plot for damage function
 discount_d = data.frame(discount1.5_output)
 
 discountd_plot = ggplot(data=discount_d) + 
-  geom_histogram(aes(x = discount1.5_output), binwidth =200, color = "black", fill = "blue") + labs(x = "Social Cost Of Carbon", y = "Frequency", title = "Social Cost Of Carbon (1.5%)") + theme_classic()
+  geom_histogram(aes(x = discount1.5_output), binwidth=3, color = "black", fill = "blue") + labs(x = "Social Cost Of Carbon", y = "Frequency", title = "Social Cost Of Carbon (5.0%)") + theme_classic()
 
 discountd_plot
 ```
@@ -539,7 +539,7 @@ return(c(welfare))
 p_climSens = 2.9
 p_damage = 0.009
 p_abate = 0.03
-p_discount = 0.03
+p_discount = 0.015
 
 
 
@@ -571,5 +571,7 @@ opt_welfare_0.1 = optim(p_abatePct, toy_IAM_optimal,
                     p_climSens=p_climSens, p_discount=p_discount)
 
 opt_welfare_0.1
+
+BAUwelfare = data
 ```
 
