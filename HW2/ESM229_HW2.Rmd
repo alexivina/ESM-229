@@ -242,14 +242,14 @@ output_vector = matrix(0, 250, 1)
 output_1.5 = for(i in 1:250){
   p_climSens_output[i] = rlnorm(1, meanlog=0.95, sdlog=0.53)
   
-  discount1.5_output[i] = toy_IAM_SCC(p_damage, p_climSens_output[i], 0.015)
+  discount1.5_output[i] = toy_IAM_SCC(p_damage, p_climSens_output[i], 0.05)
   
 }
 #changed the discount rate issues with the code
 
-mean(discount1.5_output) # = 299.26
-median(discount1.5_output) # = 251.5304
-sd(discount1.5_output) # = 193.2659
+mean(discount1.5_output) # = 312.3321
+median(discount1.5_output) # = 283.8286
+sd(discount1.5_output) # = 198.4625
 
 #1.5%
 
@@ -258,9 +258,9 @@ sd(discount1.5_output) # = 193.2659
 
 3.0% Discount (code not working)
 ```{r}
- #mean = 38.15951
- #median = 30.90275
- #sd = 1.554641
+ #mean = 35.75
+ #median = 26.80
+ #sd = 29.47
 ```
 
 5.0% Discount (code not working)
@@ -272,6 +272,16 @@ sd(discount1.5_output) # = 193.2659
 
 ```
 
+Plot for climate sensitivity
+```{r}
+discount = data.frame(discount1.5_output)
+
+discount_plot = ggplot(data=discount) + 
+  geom_histogram(aes(x = discount1.5_output), binwidth =1, color = "black", fill = "blue") + labs(x = "Social Cost Of Carbon", y = "Frequency", title = "Social Cost Of Carbon (5.0%)") + theme_classic()
+
+discount_plot
+```
+
 1.5%, 3.0%, 5.0% Discount Rates (Damage Function)
 ```{r}
 for(i in 1:250){
@@ -281,9 +291,9 @@ for(i in 1:250){
   
 }
 #1.5%
-mean(discount1.5_output) # = 66.50177
-median(discount1.5_output) # = 323.7824
-sd(discount1.5_output) # = 958.1419
+mean(discount1.5_output) # = 93.73911
+median(discount1.5_output) # = 346.49
+sd(discount1.5_output) # = 1003.298
 ```
 
 3.0% Discount
@@ -298,6 +308,17 @@ sd(discount1.5_output) # = 958.1419
 #mean = 7.677772
 #median = 8.37525
 #sd = 12.83112
+```
+
+plot for damage function
+```{r}
+
+discount_d = data.frame(discount1.5_output)
+
+discountd_plot = ggplot(data=discount_d) + 
+  geom_histogram(aes(x = discount1.5_output), binwidth =200, color = "black", fill = "blue") + labs(x = "Social Cost Of Carbon", y = "Frequency", title = "Social Cost Of Carbon (1.5%)") + theme_classic()
+
+discountd_plot
 ```
 
 Toy_IAM_Optimal_Function For Part 2
