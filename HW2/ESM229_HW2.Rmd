@@ -572,6 +572,15 @@ opt_welfare_0.1 = optim(p_abatePct, toy_IAM_optimal,
 
 opt_welfare_0.1
 
-BAUwelfare = data
+BAUwelfare = data.frame(opt_welfare_BAU$par)
+
+df2 = data.frame(1:10)
+
+welfareBAU = cbind(df2, BAUwelfare) %>% 
+  rename("decade" = 'X1.10', "welfare" = 'opt_welfare_BAU.par')
+
+welfareBAU_plot = ggplot(data = welfareBAU) + 
+  geom_point(aes(x = decade, y = welfare)) +
+  theme)classic
 ```
 
