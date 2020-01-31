@@ -39,3 +39,8 @@ lines(lowess(cross$temp.mean, cross$l_yield.mean, f=.1, iter=0), lwd=3, col="red
 lm(cross$l_yield.mean~cross$temp.mean)
 ```
 
+Part 3
+```{r}
+
+```
+
