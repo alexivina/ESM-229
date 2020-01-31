@@ -19,7 +19,9 @@ panel <- read.csv("Country_year_panel.csv", header=TRUE)
 
 ```{r}
 
-
+plot(panel$temp, panel$l_yield)
+abline(lm(panel$l_yield~panel$temp), lwd=3, col="blue")
+lines(lowess(panel$temp, panel$l_yield, f=.1, iter=0), lwd=3, col="red")
 
 ```
 
