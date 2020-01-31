@@ -17,11 +17,25 @@ library(doBy)
 panel <- read.csv("Country_year_panel.csv", header=TRUE)
 ```
 
+Part 1
 ```{r}
 
 plot(panel$temp, panel$l_yield)
 abline(lm(panel$l_yield~panel$temp), lwd=3, col="blue")
 lines(lowess(panel$temp, panel$l_yield, f=.1, iter=0), lwd=3, col="red")
 
+plm(l_yield ~ temp, data=panel, index=c("cID", "year"), model="within")
+
+```
+
+Part 2
+```{r}
+cross <- summaryBy(l_yield+temp ~ cID, FUN=c(mean), data=panel)
+
+plot(cross$temp.mean, cross$l_yield.mean)
+abline(lm(cross$l_yield.mean~cross$temp.mean), lwd=3, col="blue")
+lines(lowess(cross$temp.mean, cross$l_yield.mean, f=.1, iter=0), lwd=3, col="red")
+
+lm(cross$l_yield.mean~cross$temp.mean)
 ```
 
