@@ -101,5 +101,7 @@ crossNA <- summaryBy(l_yield+temp ~ cID, FUN=c(mean), data=NApanel)
 lm(crossNA$l_yield.mean~crossNA$temp.mean)
 
 #CrossNA coefficient is -0.02976
+
+
 ```
 
