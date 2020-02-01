@@ -42,5 +42,64 @@ lm(cross$l_yield.mean~cross$temp.mean)
 Part 3
 ```{r}
 
+#Africa
+AFpanel <- subset(panel, panel$continent=="AF",
+select=c(cID, year, l_yield, temp, continent))
+
+crossAF <- summaryBy(l_yield+temp ~ cID, FUN=c(mean), data=AFpanel)
+
+lm(crossAF$l_yield.mean~crossAF$temp.mean)
+
+#crossAF coefficient is -0.0261
+
+#Asia
+ASpanel <- subset(panel, panel$continent=="AS",
+select=c(cID, year, l_yield, temp, continent))
+
+crossAS <- summaryBy(l_yield+temp ~ cID, FUN=c(mean), data=ASpanel)
+
+lm(crossAS$l_yield.mean~crossAS$temp.mean)
+
+#crossAS coefficient is -0.009046
+
+#EU
+EUpanel <- subset(panel, panel$continent=="EU",
+select=c(cID, year, l_yield, temp, continent))
+
+crossEU <- summaryBy(l_yield+temp ~ cID, FUN=c(mean), data=EUpanel)
+
+lm(crossEU$l_yield.mean~crossEU$temp.mean)
+
+#crossEU coefficient is -0.061
+
+#Oceana
+OCpanel <- subset(panel, panel$continent=="OC",
+select=c(cID, year, l_yield, temp, continent))
+
+crossOC <- summaryBy(l_yield+temp ~ cID, FUN=c(mean), data=OCpanel)
+
+lm(crossOC$l_yield.mean~crossOC$temp.mean)
+
+#CrossOC coefficient is -0.08441
+
+#South America 
+SApanel <- subset(panel, panel$continent=="SA",
+select=c(cID, year, l_yield, temp, continent))
+
+crossSA <- summaryBy(l_yield+temp ~ cID, FUN=c(mean), data=SApanel)
+
+lm(crossSA$l_yield.mean~crossSA$temp.mean)
+
+#CrossSA coefficcient is -0.00913
+
+#North America
+NApanel <- subset(panel, panel$continent=="NM",
+select=c(cID, year, l_yield, temp, continent))
+
+crossNA <- summaryBy(l_yield+temp ~ cID, FUN=c(mean), data=NApanel)
+
+lm(crossNA$l_yield.mean~crossNA$temp.mean)
+
+#CrossNA coefficient is -0.02976
 ```
 
